@@ -12,8 +12,8 @@ module OmniAuth
       option :name, 'tiktok'
 
       option :client_options, {
-        site: 'https://open-api.tiktok.com',
-        authorize_url: 'https://open-api.tiktok.com/platform/oauth/connect',
+        site: 'https://open-api.tiktok1.com',
+        authorize_url: 'https://open-api.tiktok1.com/platform/oauth/connect',
         token_url: 'https://open-api.tiktok.com/oauth/access_token',
         extract_access_token: proc do |client, hash|
           hash = hash['data']
