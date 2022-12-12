@@ -23,6 +23,7 @@ module OmniAuth
       }
 
       option :authorize_options, %i[scope display auth_type]
+      option :token_options, %i[grant_type]
 
       uid { access_token.params['open_id'] }
 
@@ -39,7 +40,6 @@ module OmniAuth
       end
 
       credentials do
-        
         hash = {}
         hash['token'] = access_token.token
         hash['refresh_token'] = access_token.refresh_token if access_token.expires? && access_token.refresh_token
@@ -51,7 +51,6 @@ module OmniAuth
       end
 
       def raw_info
-        
         @raw_info ||= access_token
                       .get("#{USER_INFO_URL}?open_id=#{access_token.params['open_id']}&access_token=#{access_token.token}")
                       .parsed || {}
