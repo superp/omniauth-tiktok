@@ -7,12 +7,12 @@ module OmniAuth
     class Tiktok < OmniAuth::Strategies::OAuth2
       class NoAuthorizationCodeError < StandardError; end
       DEFAULT_SCOPE = 'user.info.basic,video.list'
-      USER_INFO_URL = 'https://open.tiktokapis.com/v2/user/info/'
+      USER_INFO_URL = 'https://open-api.tiktok.com/oauth/userinfo'
 
       option :name, 'tiktok'
 
       option :client_options, {
-        site: 'https://open-api.tiktok.com        ',
+        site: 'https://open-api.tiktok.com',
         authorize_url: 'https://open-api.tiktok.com/platform/oauth/connect',
         token_url: 'https://open-api.tiktok.com/oauth/access_token',
         extract_access_token: proc do |client, hash|
@@ -27,16 +27,19 @@ module OmniAuth
       uid { access_token.params['open_id'] }
 
       info do
+        
         prune!('nickname' => raw_info['data']['display_name'])
       end
 
       extra do
+        
         hash = {}
         hash['raw_info'] = raw_info unless skip_info?
         prune! hash
       end
 
       credentials do
+        
         hash = {}
         hash['token'] = access_token.token
         hash['refresh_token'] = access_token.refresh_token if access_token.expires? && access_token.refresh_token
@@ -48,16 +51,19 @@ module OmniAuth
       end
 
       def raw_info
+        
         @raw_info ||= access_token
                       .get("#{USER_INFO_URL}?open_id=#{access_token.params['open_id']}&access_token=#{access_token.token}")
                       .parsed || {}
       end
 
       def callback_url
+        
         options[:callback_url] || (full_host + script_name + callback_path)
       end
 
       def authorize_params
+        
         super.tap do |params|
           params[:scope] ||= DEFAULT_SCOPE
           params[:response_type] = 'code'
@@ -67,6 +73,7 @@ module OmniAuth
       end
 
       def token_params
+        
         super.tap do |params|
           params.delete(:client_id)
           params[:client_key] = options.client_id
