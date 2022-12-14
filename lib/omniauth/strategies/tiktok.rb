@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'omniauth/strategies/oauth2'
+require 'httplog'
 
 module OmniAuth
   module Strategies
@@ -15,6 +16,7 @@ module OmniAuth
         site: 'https://open-api.tiktok.com',
         authorize_url: 'https://www.tiktok.com/auth/authorize',
         token_url: 'https://open-api.tiktok.com/oauth/access_token',
+        stratergy_name: 'tiktok',
         extract_access_token: proc do |client, hash|
           hash = hash['data']
           token = hash.delete('access_token') || hash.delete(:access_token)
@@ -23,17 +25,14 @@ module OmniAuth
       }
 
       option :authorize_options, %i[scope display auth_type]
-      option :token_options, %i[grant_type]
 
       uid { access_token.params['open_id'] }
 
       info do
-        
         prune!('nickname' => raw_info['data']['display_name'])
       end
 
       extra do
-        
         hash = {}
         hash['raw_info'] = raw_info unless skip_info?
         prune! hash
@@ -57,12 +56,10 @@ module OmniAuth
       end
 
       def callback_url
-        
         options[:callback_url] || (full_host + script_name + callback_path)
       end
 
       def authorize_params
-        
         super.tap do |params|
           params[:scope] ||= DEFAULT_SCOPE
           params[:response_type] = 'code'
@@ -72,7 +69,6 @@ module OmniAuth
       end
 
       def token_params
-        
         super.tap do |params|
           params.delete(:client_id)
           params[:client_key] = options.client_id
