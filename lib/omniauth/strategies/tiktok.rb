@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'omniauth/strategies/oauth2'
-require 'httplog'
 
 module OmniAuth
   module Strategies
